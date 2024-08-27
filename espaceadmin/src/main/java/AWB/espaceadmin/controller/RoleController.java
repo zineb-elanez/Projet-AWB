@@ -1,43 +1,43 @@
 package AWB.espaceadmin.controller;
 
-import AWB.espaceadmin.dto.RoleDetailDTO;
-import AWB.espaceadmin.model.Role;
+import AWB.espaceadmin.dto.RoleDTO;
 import AWB.espaceadmin.Service.RoleService;
-import AWB.espaceadmin.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/api/roles")
+@CrossOrigin(origins = "http://localhost:3000")
 public class RoleController {
-
     @Autowired
     private RoleService roleService;
-   /* @GetMapping
-    public List<Role> getAllRoles() {
-        return roleService.getAllRoles();
-    }
-
-
-
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Role> getRoleById(@PathVariable Long id) {
-        Optional<Role> role = roleService.getRoleById(id);
-        return role.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-    }*/
 
     @GetMapping
-    public ResponseEntity<List<RoleDetailDTO>> getAllRoles() {
-        return ResponseEntity.ok(roleService.getAllRolesWithUsers());
+    public ResponseEntity<List<RoleDTO>> getAllRoles() {
+        return ResponseEntity.ok(roleService.getAllRoles());
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<RoleDTO> getRole(@PathVariable Long id) {
+        return ResponseEntity.ok(roleService.getRoleById(id));
+    }
+
     @PostMapping
-    public Role createRole(@RequestBody Role role) {
-        return roleService.createRole(role);
+    public ResponseEntity<RoleDTO> createRole(@RequestBody RoleDTO roleDTO) {
+        return ResponseEntity.ok(roleService.createRole(roleDTO));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<RoleDTO> updateRole(@PathVariable Long id, @RequestBody RoleDTO roleDTO) {
+        return ResponseEntity.ok(roleService.updateRole(id, roleDTO));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteRole(@PathVariable Long id) {
+        roleService.deleteRole(id);
+        return ResponseEntity.noContent().build();
     }
 }

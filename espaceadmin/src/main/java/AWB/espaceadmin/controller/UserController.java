@@ -1,51 +1,59 @@
 package AWB.espaceadmin.controller;
 
-import AWB.espaceadmin.dto.UserDetailDTO;
-import AWB.espaceadmin.model.User;
+import AWB.espaceadmin.dto.UserDTO;
 import AWB.espaceadmin.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")
+@CrossOrigin(origins = "http://localhost:3000")
 public class UserController {
-
     @Autowired
     private UserService userService;
-    /*@GetMapping
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
+
+    @GetMapping
+    public ResponseEntity<List<UserDTO>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
     }
-
-
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        Optional<User> user = userService.getUserById(id);
-        return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<UserDTO> getUser(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.getUserById(id));
     }
 
-    @PutMapping("/{userId}/roles/{roleId}")
-    public ResponseEntity<User> assignRoleToUser(@PathVariable Long userId, @PathVariable Long roleId) {
-        User user = userService.assignRoleToUser(userId, roleId);
-        return ResponseEntity.ok(user);
-    }*/
-    @GetMapping
-    public ResponseEntity<List<UserDetailDTO>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsersWithRoles());
-    }
     @PostMapping
-    public User createUser(@RequestBody User user) {
-        return userService.createUser(user);
+    public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO userDTO) {
+        return ResponseEntity.ok(userService.createUser(userDTO));
     }
 
-    @PutMapping("/{userId}/roles/{roleId}")
-    public ResponseEntity<UserDetailDTO> assignRoleToUser(@PathVariable Long userId, @PathVariable Long roleId) {
-        UserDetailDTO updatedUser = userService.assignRoleToUser(userId, roleId);
-        return ResponseEntity.ok(updatedUser);
+    @PutMapping("/{id}")
+    public ResponseEntity<UserDTO> updateUser(@PathVariable Long id, @RequestBody UserDTO userDTO) {
+        return ResponseEntity.ok(userService.updateUser(id, userDTO));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{userId}/roles/{roleId}/applications/{applicationId}")
+    public ResponseEntity<UserDTO> assignRoleToUserInApplication(
+            @PathVariable Long userId,
+            @PathVariable Long roleId,
+            @PathVariable Long applicationId) {
+        return ResponseEntity.ok(userService.assignRoleToUserInApplication(userId, roleId, applicationId));
+    }
+
+    @DeleteMapping("/{userId}/roles/{roleId}/applications/{applicationId}")
+    public ResponseEntity<UserDTO> removeRoleFromUserInApplication(
+            @PathVariable Long userId,
+            @PathVariable Long roleId,
+            @PathVariable Long applicationId) {
+        return ResponseEntity.ok(userService.removeRoleFromUserInApplication(userId, roleId, applicationId));
     }
 }

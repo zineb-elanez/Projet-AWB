@@ -1,39 +1,43 @@
 package AWB.espaceadmin.controller;
 
-import AWB.espaceadmin.model.Application;
+import AWB.espaceadmin.dto.ApplicationDTO;
 import AWB.espaceadmin.Service.ApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/applications")
+@CrossOrigin(origins = "http://localhost:3000")
 public class ApplicationController {
     @Autowired
     private ApplicationService applicationService;
 
-    @GetMapping("/{id}")
-    public List<Application> getAllApplicationUsers(@PathVariable Long id) {
-        return applicationService.getAllApplications();
-    }
-    @GetMapping()
-    public List<Application> getAllApplications() {
-        return applicationService.getAllApplications();
+    @GetMapping
+    public ResponseEntity<List<ApplicationDTO>> getAllApplications() {
+        return ResponseEntity.ok(applicationService.getAllApplications());
     }
 
-    @PostMapping()
-    public Application createApplication(@RequestBody Application application) {
-        return applicationService.createApplication(application);
+    @GetMapping("/{id}")
+    public ResponseEntity<ApplicationDTO> getApplication(@PathVariable Long id) {
+        return ResponseEntity.ok(applicationService.getApplicationById(id));
+    }
+
+    @PostMapping
+    public ResponseEntity<ApplicationDTO> createApplication(@RequestBody ApplicationDTO applicationDTO) {
+        return ResponseEntity.ok(applicationService.createApplication(applicationDTO));
     }
 
     @PutMapping("/{id}")
-    public Application updateApplication(@PathVariable Long id, @RequestBody Application application) {
-        return applicationService.updateApplication(id, application);
+    public ResponseEntity<ApplicationDTO> updateApplication(@PathVariable Long id, @RequestBody ApplicationDTO applicationDTO) {
+        return ResponseEntity.ok(applicationService.updateApplication(id, applicationDTO));
     }
 
     @DeleteMapping("/{id}")
-    public void deleteApplication(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteApplication(@PathVariable Long id) {
         applicationService.deleteApplication(id);
+        return ResponseEntity.noContent().build();
     }
 }
